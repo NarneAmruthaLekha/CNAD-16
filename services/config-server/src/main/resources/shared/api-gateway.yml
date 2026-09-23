@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+        - id: change-analysis-service
+          uri: lb://change-analysis-service
+          predicates:
+            - Path=/api/changes/**,/api/dependencies/**,/api/metrics/**
+        - id: history-service
+          uri: lb://history-service
+          predicates:
+            - Path=/api/history/**
+        - id: risk-prediction-service
+          uri: lb://risk-prediction-service
+          predicates:
+            - Path=/api/predict/**
+        - id: recommendation-service
+          uri: lb://recommendation-service
+          predicates:
+            - Path=/api/recommendations/**
+        - id: report-service
+          uri: lb://report-service
+          predicates:
+            - Path=/api/reports/**,/index.html,/css/**,/js/**,/

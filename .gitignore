@@ -1,0 +1,40 @@
+# IDE and System Files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+
+# Maven and Build artifacts
+target/
+build/
+bin/
+out/
+.gradle/
+.pnpm-store/
+node_modules/
+*.class
+
+# Python and Machine Learning environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+venv/
+.venv/
+env/
+dist/
+eggs/
+*.egg-info/
+
+# Logs and local configurations
+*.log
+*.sqlite
+.env
+.env.local
