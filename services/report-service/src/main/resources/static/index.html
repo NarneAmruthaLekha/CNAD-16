@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImpactFlow | Change Risk Assessment & Analytics</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Background glows for dark mode depth -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Login Screen -->
+    <div id="login-container" class="login-wrapper">
+        <div class="login-card glass">
+            <div class="brand">
+                <div class="logo-icon"></div>
+                <h1>ImpactFlow</h1>
+            </div>
+            <p class="subtitle">Predicting microservices risk before you deploy.</p>
+            
+            <div id="login-error" class="alert error hidden">Invalid username or password.</div>
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="e.g., admin, developer" required value="developer">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required value="password">
+                </div>
+                <button type="submit" class="btn primary full-width">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Interface (Dashboard) -->
+    <div id="app-container" class="app-wrapper hidden">
+        <!-- Navigation Header -->
+        <header class="navbar glass">
+            <div class="navbar-brand">
+                <div class="logo-icon-small"></div>
+                <h2>ImpactFlow</h2>
+                <span class="badge env">CI/CD Environment</span>
+            </div>
+            <div class="navbar-user">
+                <span id="user-display" class="user-badge">Developer</span>
+                <button id="logout-btn" class="btn secondary">Logout</button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content Grid -->
+        <main class="dashboard-content">
+            <!-- Stats Row -->
+            <section class="stats-row">
+                <div class="card stat glass">
+                    <h3>Total Scans</h3>
+                    <p id="stat-total" class="stat-number">-</p>
+                    <span class="stat-desc">Submissions processed</span>
+                </div>
+                <div class="card stat glass">
+                    <h3>High Risk Warnings</h3>
+                    <p id="stat-high-risk" class="stat-number text-danger">-</p>
+                    <span class="stat-desc">Requires manual approval</span>
+                </div>
+                <div class="card stat glass">
+                    <h3>Avg. LOC Delta</h3>
+                    <p id="stat-avg-loc" class="stat-number text-primary">-</p>
+                    <span class="stat-desc">Lines changed per PR</span>
+                </div>
+                <div class="card stat glass">
+                    <h3>Model Confidence</h3>
+                    <p id="stat-avg-confidence" class="stat-number text-success">-</p>
+                    <span class="stat-desc">Mean classifier confidence</span>
+                </div>
+            </section>
+
+            <!-- Actions and List -->
+            <section class="dashboard-controls">
+                <h3>Change Evaluation History</h3>
+                <button id="open-submit-modal" class="btn primary">+ Evaluate New Change</button>
+            </section>
+
+            <!-- Submissions Table Card -->
+            <section class="table-card glass">
+                <div class="table-container">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Repo / Branch</th>
+                                <th>Commit</th>
+                                <th>Source Service</th>
+                                <th>Metrics</th>
+                                <th>Risk Score</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissions-tbody">
+                            <!-- Populated dynamically via JS -->
+                            <tr>
+                                <td colspan="7" class="text-center">Loading submissions history...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Submit Change Modal -->
+    <div id="submit-modal" class="modal-overlay hidden">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3>Submit Proposed Change</h3>
+                <button class="close-modal-btn" id="close-submit-modal">&times;</button>
+            </div>
+            <form id="submit-change-form">
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label for="form-repo">Repository URL</label>
+                        <input type="text" id="form-repo" value="https://github.com/impactflow/payment-gateway" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="form-branch">Branch</label>
+                            <input type="text" id="form-branch" value="feature/add-apple-pay" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="form-commit">Commit ID (SHA)</label>
+                            <input type="text" id="form-commit" value="b3d81f21a9d04423405786ef" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="form-files">Changed Files (Comma separated)</label>
+                        <textarea id="form-files" rows="3" placeholder="e.g. services/payment-service/src/Payment.java, services/auth-service/src/Auth.java" required>services/payment-service/src/PaymentProcessor.java, services/payment-service/src/ApplePayHandler.java</textarea>
+                        <span class="input-hint">Tip: Use path starting with "services/name-service/" to impact service mapping.</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn secondary" id="cancel-submit-modal">Cancel</button>
+                    <button type="submit" class="btn primary">Submit for Analysis</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Details Modal -->
+    <div id="report-modal" class="modal-overlay hidden">
+        <div class="modal report-modal-width glass">
+            <div class="modal-header">
+                <div>
+                    <h3 id="report-title">Change Impact Analysis</h3>
+                    <p id="report-meta-sub" class="text-muted">Loading metadata...</p>
+                </div>
+                <button class="close-modal-btn" id="close-report-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="report-grid">
+                    <!-- Left column: Metrics & Risk Prediction -->
+                    <div class="report-left">
+                        <!-- Risk Circle/Indicator -->
+                        <div class="card glass-nested risk-panel">
+                            <h4>Risk Score Assessment</h4>
+                            <div class="risk-gauge-container">
+                                <div id="report-risk-badge" class="risk-level-badge large">UNKNOWN</div>
+                                <div class="confidence-bar-wrapper">
+                                    <div class="confidence-labels">
+                                        <span>Prediction Confidence</span>
+                                        <span id="report-confidence-val">0%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div id="report-confidence-progress" class="progress-bar-fill" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Codebase Metrics Card -->
+                        <div class="card glass-nested metrics-panel">
+                            <h4>Complexity & Size Metrics</h4>
+                            <div class="metrics-grid">
+                                <div class="metric-val-card">
+                                    <span class="label">LOC Delta</span>
+                                    <span id="report-loc" class="value">-</span>
+                                </div>
+                                <div class="metric-val-card">
+                                    <span class="label">Complexity</span>
+                                    <span id="report-complexity" class="value">-</span>
+                                </div>
+                                <div class="metric-val-card">
+                                    <span class="label">File Churn</span>
+                                    <span id="report-churn" class="value">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right column: Architecture Graph & Recommendations -->
+                    <div class="report-right">
+                        <!-- Downstream Impacts -->
+                        <div class="card glass-nested impact-panel">
+                            <h4>Service Dependency Impact Map</h4>
+                            <div class="impact-flow-visual">
+                                <div class="service-node source" id="report-source-service">unknown-service</div>
+                                <div class="flow-arrow">&rarr;</div>
+                                <div class="impacted-list" id="report-impacted-services-list">
+                                    <span class="no-impact text-muted">No downstream service dependencies affected</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contributing Drivers -->
+                        <div class="card glass-nested drivers-panel">
+                            <h4>Contributing Factors</h4>
+                            <ul id="report-drivers-list" class="styled-list driver-bullets">
+                                <li>No factors listed</li>
+                            </ul>
+                        </div>
+
+                        <!-- Actionable Recommendations -->
+                        <div class="card glass-nested recommendations-panel">
+                            <h4>Synthesized Recommendations</h4>
+                            <ul id="report-recs-list" class="styled-list rec-bullets">
+                                <li>No recommendations generated</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Changed files section -->
+                <div class="card glass-nested files-panel">
+                    <h4>Modified File Assets</h4>
+                    <ul id="report-files-list" class="file-list">
+                        <!-- Loaded dynamically -->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn primary" id="close-report-modal-btn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
