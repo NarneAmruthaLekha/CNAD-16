@@ -1,5 +1,6 @@
-fastapi
-uvicorn[standard]
-numpy
-scikit-learn
-joblib
+fastapi==0.161.1
+uvicorn[standard]==0.54.0
+numpy==2.4.6
+scikit-learn==1.9.1
+joblib==1.6.0
+kafka-python==3.0.11
