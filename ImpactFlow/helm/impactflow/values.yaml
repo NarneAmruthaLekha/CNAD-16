@@ -1,0 +1,61 @@
+
+replicaCount: 1
+image:
+  repository: impactflow-gateway
+  tag: latest
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+service:
+  type: NodePort
+  port: 8080
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: impactflow.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+httpRoute:
+  enabled: false
+  annotations: {}
+  parentRefs: []
+  hostnames: []
+  rules: []
+resources: {}
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 15
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}

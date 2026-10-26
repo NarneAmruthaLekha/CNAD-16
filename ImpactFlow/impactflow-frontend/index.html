@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ImpactFlow — Change Risk Intelligence</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">IF</div><div><strong>ImpactFlow</strong><span>CHANGE INTELLIGENCE</span></div></div>
+      <div class="workspace-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="overview"><span>◫</span> Overview</button>
+      <button class="nav-item" data-view="submit"><span>＋</span> Analyze a change</button>
+      <button class="nav-item" data-view="reports"><span>▤</span> Reports history</button>
+      <div class="sidebar-bottom">
+        <div class="status-card"><span class="status-dot"></span><div><strong>Project workspace</strong><small id="connection-label">Checking services…</small></div></div>
+        <p>Understand change risk before it reaches production.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">SOFTWARE CHANGE RISK PLATFORM</div><h1 id="page-title">Overview</h1></div>
+        <div class="top-actions"><span class="local-badge"><span class="status-dot"></span> Local environment</span><button class="avatar" title="ImpactFlow workspace">IF</button></div>
+      </header>
+
+      <section class="view active" id="view-overview">
+        <div class="welcome">
+          <div><div class="eyebrow light">YOUR CHANGE, UNDERSTOOD</div><h2>Make safer changes<br>with more confidence.</h2><p>Submit a software change to estimate its risk, understand the result, and keep a record of your analyses.</p><button class="primary-btn" data-go="submit">Analyze a change <span>→</span></button></div>
+          <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-core">IF</div><div class="float-chip chip-one">✓ Change analysis</div><div class="float-chip chip-two">↗ Risk insights</div><div class="float-chip chip-three">▤ Saved reports</div></div>
+        </div>
+        <div class="section-heading"><div><h3>Your activity at a glance</h3><p>Numbers update from your saved reports.</p></div><button class="text-btn" data-go="reports">View reports →</button></div>
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-top"><span>Total analyses</span><span class="metric-icon">▤</span></div><strong id="metric-total">—</strong><small>Saved change reports</small></article>
+          <article class="metric-card"><div class="metric-top"><span>Low risk</span><span class="risk-dot low"></span></div><strong id="metric-low">—</strong><small>Lower predicted risk</small></article>
+          <article class="metric-card"><div class="metric-top"><span>Medium risk</span><span class="risk-dot medium"></span></div><strong id="metric-medium">—</strong><small>Review recommended</small></article>
+          <article class="metric-card"><div class="metric-top"><span>High risk</span><span class="risk-dot high"></span></div><strong id="metric-high">—</strong><small>Careful review recommended</small></article>
+        </div>
+        <div class="info-banner"><div class="info-symbol">i</div><div><strong>How to use ImpactFlow</strong><p>Submit a change with repository details and change-size information. ImpactFlow will return a risk estimate and save a report when the backend pipeline is connected.</p></div></div>
+      </section>
+
+      <section class="view" id="view-submit">
+        <div class="page-intro"><div class="eyebrow">NEW ANALYSIS</div><h2>Tell us about your change</h2><p>Fill in the details below. If you're unsure about a field, use the information from your pull request or commit.</p></div>
+        <form id="change-form" class="form-card">
+          <div class="form-section-title"><span class="step-number">1</span><div><h3>Repository details</h3><p>Identify the code change you want to assess.</p></div></div>
+          <div class="form-grid">
+            <label class="field full">Repository URL <span class="required">*</span><input name="repoUrl" type="url" placeholder="https://github.com/your-team/your-project" required><small>Use the repository link for the code being changed.</small></label>
+            <label class="field">Commit ID <span class="required">*</span><input name="commitId" placeholder="e.g. a1b2c3d" required></label>
+            <label class="field">Branch <span class="required">*</span><input name="branch" placeholder="e.g. main" value="main" required></label>
+            <label class="field full">Describe the proposed change <span class="required">*</span><textarea name="proposedChange" rows="3" placeholder="What are you changing, and why?" required></textarea></label>
+            <label class="field full">Changed file paths <span class="required">*</span><textarea name="changedFiles" rows="3" placeholder="One file path per line&#10;src/main/java/PaymentService.java&#10;src/test/java/PaymentServiceTest.java" required></textarea><small>Enter one file path per line.</small></label>
+          </div>
+          <div class="form-section-title separated"><span class="step-number">2</span><div><h3>Change size and complexity</h3><p>Use values from your diff or code review, if available.</p></div></div>
+          <div class="form-grid three">
+            <label class="field">Lines added<input name="linesAdded" type="number" min="0" value="120" required></label>
+            <label class="field">Lines deleted<input name="linesDeleted" type="number" min="0" value="30" required></label>
+            <label class="field">Complexity (1–5)<select name="complexity"><option value="1">1 — Very simple</option><option value="2">2 — Simple</option><option value="3" selected>3 — Moderate</option><option value="4">4 — Complex</option><option value="5">5 — Very complex</option></select></label>
+          </div>
+          <div class="form-actions"><span>Fields marked * are required.</span><button class="primary-btn" type="submit" id="submit-btn">Analyze change <span>→</span></button></div>
+          <div id="submit-message" class="message hidden" role="status"></div>
+        </form>
+      </section>
+
+      <section class="view" id="view-reports">
+        <div class="section-heading reports-heading"><div><div class="eyebrow">YOUR HISTORY</div><h2>Analysis reports</h2><p>Review previously submitted changes and their predicted risk.</p></div><button class="primary-btn" data-go="submit">＋ New analysis</button></div>
+        <div class="table-card"><div class="table-toolbar"><div class="search-wrap"><span>⌕</span><input id="report-search" placeholder="Search repository, branch, or risk…"></div><button class="secondary-btn" id="refresh-reports">↻ Refresh</button></div>
+          <div class="table-scroll"><table><thead><tr><th>CHANGE</th><th>BRANCH</th><th>RISK</th><th>STATUS</th><th></th></tr></thead><tbody id="reports-body"><tr><td colspan="5" class="empty-cell">Loading reports…</td></tr></tbody></table></div>
+          <div class="table-footer" id="reports-footer">Reports are loaded from your local Report Service.</div>
+        </div>
+        <div id="report-detail" class="detail-card hidden"></div>
+      </section>
+
+      <footer class="footer"><span>ImpactFlow <span class="footer-dot">•</span> Change Risk Intelligence</span><span>Predictions support review; they do not replace engineering judgment.</span></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
