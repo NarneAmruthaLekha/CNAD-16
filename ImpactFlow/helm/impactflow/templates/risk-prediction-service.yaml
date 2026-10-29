@@ -1,0 +1,33 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk-prediction-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: risk-prediction-service
+  template:
+    metadata:
+      labels:
+        app: risk-prediction-service
+    spec:
+      containers:
+        - name: risk-prediction-service
+          image: impactflow-risk:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: risk-prediction-service
+spec:
+  selector:
+    app: risk-prediction-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

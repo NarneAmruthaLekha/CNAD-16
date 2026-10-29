@@ -1,0 +1,33 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: change-analysis-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: change-analysis-service
+  template:
+    metadata:
+      labels:
+        app: change-analysis-service
+    spec:
+      containers:
+        - name: change-analysis-service
+          image: impactflow-change-analysis:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: change-analysis-service
+spec:
+  selector:
+    app: change-analysis-service
+  ports:
+    - port: 8082
+      targetPort: 8082
+  type: ClusterIP
